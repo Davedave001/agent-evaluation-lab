@@ -9,6 +9,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
 
 import uvicorn
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 from eval_lab.benchmark import (
     format_benchmark_markdown,
     generate_reproducible_benchmark_suite,
@@ -21,6 +22,12 @@ app = FastAPI(
     version="0.2.0",
     description="100-Scenario Benchmark Runner, Trajectory Scorer & Failure Taxonomy Service",
 )
+
+
+@app.get("/", include_in_schema=False)
+def root() -> RedirectResponse:
+    """Redirect bare root URL to interactive Swagger API documentation."""
+    return RedirectResponse(url="/docs")
 
 
 @app.get("/health")
