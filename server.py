@@ -5,7 +5,12 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
+root = Path(__file__).resolve().parent
+sys.path.insert(0, str(root / "src"))
+for candidate in [root.parent / "axiom-runtime" / "src", root / "axiom-runtime" / "src", Path("/app/axiom-runtime/src")]:
+    if candidate.exists():
+        sys.path.insert(0, str(candidate))
+        break
 
 import uvicorn
 from fastapi import FastAPI
@@ -52,4 +57,6 @@ def run_benchmark_markdown() -> dict:
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8003, log_level="info")
+    import os
+    host = os.getenv("HOST", "0.0.0.0")
+    uvicorn.run(app, host=host, port=8003, log_level="info")
