@@ -1,0 +1,31 @@
+name: CI Suite
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Checkout Axiom Runtime dependency
+        uses: actions/checkout@v4
+        with:
+          repository: Davedave001/axiom-runtime
+          path: deps/axiom-runtime
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install fastapi uvicorn pydantic pytest
+      - name: Run Test Suite
+        env:
+          PYTHONPATH: src:deps/axiom-runtime/src
+        run: |
+          pytest -v tests/
